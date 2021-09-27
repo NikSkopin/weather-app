@@ -17,5 +17,6 @@ module.exports = {
     'quotes': "off",
     "semi": "off",
     "import/prefer-default-export": "off",
+    "max-len": "off",
   },
 };

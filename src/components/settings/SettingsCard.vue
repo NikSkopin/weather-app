@@ -9,8 +9,12 @@
         {{ city }}
       </el-col>
       <el-col :span="4" class="settingsCard-delete">
-        <el-button icon="el-icon-delete" size="medium" circle
-        class="settingsCard-delete__button"
+        <el-button
+          icon="el-icon-delete"
+          size="medium"
+          circle
+          class="settingsCard-delete__button"
+          @click="$emit('deleteCity', city)"
         ></el-button>
       </el-col>
     </el-row>
@@ -38,6 +42,7 @@ export default defineComponent({
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   height: 40px;
   border-radius: 4px;
+  cursor: pointer;
   &-hamburger {
     display: flex;
     flex-direction: column;
