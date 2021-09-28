@@ -69,6 +69,13 @@ export default defineComponent({
       try {
         isLoading.value = true
         error.value = ''
+
+        // allow only 5 cards
+        if (Object.keys(weather.value).length > 4) {
+          error.value = `Too many cards :( Delete some...`
+          return
+        }
+
         const response = await fetch(`${weatherUrl}q=${cityName}&appid=${key}&units=metric`)
 
         if (response.status === 200) {
