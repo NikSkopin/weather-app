@@ -8,6 +8,7 @@
 import WeatherApp from "@/components/WeatherApp.vue";
 
 export default {
+  name: 'weatherCards',
   components: { WeatherApp },
 }
 

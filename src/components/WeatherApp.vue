@@ -3,25 +3,25 @@
     <el-container v-if="preferencesOpened" class="weather-container">
       <el-button
         circle
-        class="weather-service-button" icon="el-icon-check" size="small" type="primary"
+        class="weather-service-button" icon="el-icon-check" size="small"
         @click="togglePreferences"
       />
       <el-main>
         <Settings :cities="Object.keys(weather)" @cityAdd="addCity" @deleteCity="deleteCity"/>
       </el-main>
     </el-container>
-        <el-container class="weather-container" v-else>
-          <el-button
-            type="primary" icon="el-icon-edit" size="small" circle
-            @click="togglePreferences"
-            class="weather-service-button"
-          />
-          <el-main>
-            <el-row v-for="(city, i) in Object.keys(weather)" :key="i">
-              <city-weather :weather="weather[city]"/>
-            </el-row>
-          </el-main>
-        </el-container>
+    <el-container class="weather-container" v-else>
+      <el-button
+        icon="el-icon-edit" size="small" circle
+        @click="togglePreferences"
+        class="weather-service-button"
+      />
+      <el-main>
+        <el-row v-for="(city, i) in Object.keys(weather)" :key="i">
+          <city-weather :weather="weather[city]"/>
+        </el-row>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -32,21 +32,24 @@ import {
 import City from "@/models/city.model"
 import CityWeather from "@/components/CityWeather.vue";
 import Settings from "@/components/settings/Settings.vue";
-import { key } from "@/weather/weatherApiKeys";
+import { key } from "@/services/weatherApiKeys";
 
 export default defineComponent({
   components: { Settings, CityWeather },
   setup() {
-    const nameWeatherUrl = 'https://api.openweathermap.org/data/2.5/weather?'
+    const weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?'
 
+    // some helpers
     const preferencesOpened = ref<boolean>(false)
     const isLoading = ref(true)
     const error = ref('')
 
+    // vue 3 props sharing
     provide('error', error)
 
     const weather = ref<City>({})
 
+    // local storage cities array
     const weatherCards = ref<string[]>([])
 
     const togglePreferences = (): void => {
@@ -66,7 +69,7 @@ export default defineComponent({
       try {
         isLoading.value = true
         error.value = ''
-        const response = await fetch(`${nameWeatherUrl}q=${cityName}&appid=${key}&units=metric`)
+        const response = await fetch(`${weatherUrl}q=${cityName}&appid=${key}&units=metric`)
 
         if (response.status === 200) {
           const weatherObject = await response.json()
@@ -89,7 +92,6 @@ export default defineComponent({
       } catch (e) {
         console.log(e)
       } finally {
-        console.log('fetched')
         isLoading.value = false
       }
     }
@@ -103,17 +105,21 @@ export default defineComponent({
       saveToLocalStorage(JSON.stringify(Object.keys(weather.value)))
     }
 
-    // check for an array with cities in the localstorage
+    // when mounted check for an array with cities in the localstorage
     onMounted(() => {
       let citiesArray = getFromLocalStorage()
       if (!citiesArray) {
         // get position and save city name into localstorage
-        citiesArray = ["Moscow", "Glasgow", "London"]
+        // we can use geolocation browser api, google api or whatever we want
+        // hardcoded for purposes of simplification
+        citiesArray = ["Moscow"]
         saveToLocalStorage(JSON.stringify(citiesArray))
       }
-      citiesArray.forEach((city) => {
-        fetchWeather(city)
-      })
+      if (citiesArray) {
+        citiesArray.forEach((city) => {
+          fetchWeather(city)
+        })
+      }
     })
 
     return {

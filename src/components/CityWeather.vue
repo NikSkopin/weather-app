@@ -37,7 +37,7 @@ export default defineComponent({
   setup(props) {
     const getImageUrl = (iconName: string, size: '2x' | '4x') => `http://openweathermap.org/img/wn/${iconName}@${size || '1x'}.png`
 
-    const capitalizeWord = (string: string | undefined) => string && string.charAt(0).toUpperCase() + string.slice(1)
+    const capitalizeWord = (str: string | undefined) => str && (str.charAt(0).toUpperCase() + str.slice(1))
 
     // COMPUTED values
     const descriptionText = computed(() : string => {
